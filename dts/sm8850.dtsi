@@ -1,4 +1,79 @@
-/* SM8850 (canoe/kaanapali) SoC DTSI — TODO
- * 来源：主线 kaanapali 分支（Codelinaro kernel-qcom / Xlie linux）。
- * 板级 dts（device:dts/pma120.dts）将 include 本文件；
- * 生成板级 dts 用 dtc -I dtb -O dts 从 device/PMA120/fdt.dtb 反编译后整理。 */
+// SPDX-License-Identifier: BSD-3-Clause
+// Qualcomm SM8850 (canoe / kaanapali): the SoC-level nodes UniXNU needs.
+// Values are the phone's own device tree (device/PMA120/fdt.dtb):
+//   gic   /soc/interrupt-controller@17000000  reg 0x17000000/0x10000, 0x17080000/0x200000
+//   cpus  cpu@0..500 (6) and cpu@10000, cpu@10100 (2), all "arm,armv8"
+//   ufs   /soc/ufshc@1d84000, reg 0x1d84000/0x3000 0x1d88000/0x18000 0x1da5000/0x2000 0x1da4000/0x10,
+//         interrupt SPI 265, iommus = <apps-smmu SID 0x60 0>
+//   phy   /soc/ufsphy_mem@1d80000, "qcom,ufs-phy-qmp-v4-canoe", reg 0x1d80000/0x2000
+//   smmu  /soc/apps-smmu@15000000, "qcom,qsmmu-v500", reg 0x15000000/0x100000
+/dts-v1/;
+
+/ {
+    compatible = "qcom,sm8850";
+    #address-cells = <2>;
+    #size-cells = <2>;
+    interrupt-parent = <&gic>;
+
+    cpus {
+        #address-cells = <2>;
+        #size-cells = <0>;
+        timebase-frequency = <19200000>;
+        cpu0: cpu@0 { device_type = "cpu"; compatible = "arm,armv8"; reg = <0 0x0>; };
+        cpu1: cpu@100 { device_type = "cpu"; compatible = "arm,armv8"; reg = <0 0x100>; };
+        cpu2: cpu@200 { device_type = "cpu"; compatible = "arm,armv8"; reg = <0 0x200>; };
+        cpu3: cpu@300 { device_type = "cpu"; compatible = "arm,armv8"; reg = <0 0x300>; };
+        cpu4: cpu@400 { device_type = "cpu"; compatible = "arm,armv8"; reg = <0 0x400>; };
+        cpu5: cpu@500 { device_type = "cpu"; compatible = "arm,armv8"; reg = <0 0x500>; };
+        cpu6: cpu@10000 { device_type = "cpu"; compatible = "arm,armv8"; reg = <0 0x10000>; };
+        cpu7: cpu@10100 { device_type = "cpu"; compatible = "arm,armv8"; reg = <0 0x10100>; };
+    };
+
+    psci {
+        compatible = "arm,psci-1.0";
+        method = "smc";
+    };
+
+    soc {
+        compatible = "simple-bus";
+        #address-cells = <2>;
+        #size-cells = <2>;
+        ranges;
+
+        gic: interrupt-controller@17000000 {
+            compatible = "arm,gic-v3";
+            unixnu,adt-name = "intc";
+            reg = <0 0x17000000 0 0x10000>, <0 0x17080000 0 0x200000>;
+            #interrupt-cells = <4>;
+            #address-cells = <0>;
+            interrupt-controller;
+            redistributor-stride = <0 0x40000>;
+        };
+
+        apps_smmu: iommu@15000000 {
+            compatible = "qcom,qsmmu-v500";
+            unixnu,adt-name = "apps-smmu";
+            reg = <0 0x15000000 0 0x100000>;
+            #iommu-cells = <2>;
+            status = "disabled";
+        };
+
+        ufs: ufshc@1d84000 {
+            compatible = "qcom,ufshc";
+            unixnu,adt-name = "ufshc";
+            reg = <0 0x1d84000 0 0x3000>, <0 0x1d88000 0 0x18000>,
+                  <0 0x1da5000 0 0x2000>, <0 0x1da4000 0 0x10>;
+            reg-names = "ufs_mem", "ice", "mcq_sqd", "mcq_vs";
+            interrupts = <0 265 4>;
+            iommus = <&apps_smmu 0x60 0>;
+            status = "disabled";
+        };
+
+        ufsphy: phy@1d80000 {
+            compatible = "qcom,ufs-phy-qmp-v4-canoe";
+            unixnu,adt-name = "ufsphy";
+            reg = <0 0x1d80000 0 0x2000>;
+            status = "disabled";
+        };
+    };
+};
