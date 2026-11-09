@@ -64,7 +64,7 @@
             reg = <0 0x1d84000 0 0x3000>, <0 0x1d88000 0 0x18000>,
                   <0 0x1da5000 0 0x2000>, <0 0x1da4000 0 0x10>;
             reg-names = "ufs_mem", "ice", "mcq_sqd", "mcq_vs";
-            interrupts = <0 265 4>;
+            interrupts = <0 265 4 0>;
             iommus = <&apps_smmu 0x60 0>;
             status = "disabled";
         };
