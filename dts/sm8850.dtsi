@@ -1,0 +1,4 @@
+/* SM8850 (canoe/kaanapali) SoC DTSI — TODO
+ * 来源：主线 kaanapali 分支（Codelinaro kernel-qcom / Xlie linux）。
+ * 板级 dts（device:dts/pma120.dts）将 include 本文件；
+ * 生成板级 dts 用 dtc -I dtb -O dts 从 device/PMA120/fdt.dtb 反编译后整理。 */

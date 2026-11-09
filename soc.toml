@@ -1,0 +1,12 @@
+"schema_version" = 2
+
+["soc"]
+"name" = "sm8850"
+"description" = "Qualcomm SM8850 (Snapdragon 8 Elite Gen 5, 'canoe'/'kaanapali')"
+# 主线上游（Xlie 分支，含 MPSS/IPA v5.5 支持）；发布后锁 commit
+"source_repository" = "https://github.com/Xlie-Electronic-Customs/linux"
+# "source_revision" = "TODO: pin"
+
+["components"]
+# SM8850 组件尚在移植：Adreno840 / AdrenoMetal / UFS 等落地后扩充（参考 sm8550-common）
+"include" = ["ArmCpu", "ArmDTPlatform"]
